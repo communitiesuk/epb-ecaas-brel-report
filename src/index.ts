@@ -1,8 +1,11 @@
 // src/index.ts
 import { Hono } from "hono";
+import { serveStatic } from "@hono/node-server/serve-static";
 import chromium from "@sparticuz/chromium";
 import puppeteerCore from "puppeteer-core";
+import nunjucks from "nunjucks";
 import process from "node:process";
+import govukStyles from "./sass/report.scss?inline";
 
 export async function getBrowser() {
   const isLocal = process.env.NODE_ENV === "development" || !process.env.AWS_EXECUTION_ENV;
@@ -55,19 +58,39 @@ export async function generatePdfBuffer(htmlContent: string) {
 const app = new Hono();
 
 app.get("/", (c) => {
-  return c.json({ message: "Hello from Hono with Vite+!" });
+  return c.html(reportHtml());
 });
 
+app.use(
+  "/assets/*",
+  serveStatic({
+    root: "./node_modules/govuk-frontend/dist/govuk/assets",
+    rewriteRequestPath: (path) => path.replace(/^\/assets/, ""),
+  }),
+);
+
 app.post("/generate-pdf", async (c) => {
-  const pdf = new Uint8Array(
-    await generatePdfBuffer(
-      "<h1>Hello, World!</h1><p>This is a PDF generated from HTML content.</p>",
-    ),
-  );
+  const pdf = new Uint8Array(await generatePdfBuffer(reportHtml()));
   return c.body(pdf, 200, {
     "Content-Type": "application/pdf",
     "Content-Disposition": 'attachment; filename="report.pdf"',
   });
 });
+
+function reportHtml(): string {
+  const nunjucksEnv = getNunjucks();
+
+  return nunjucksEnv.render("report.njk", {
+    css: govukStyles,
+    title: "Sample Report",
+    content: "This is a sample report generated using Puppeteer and Nunjucks.",
+  });
+}
+
+function getNunjucks() {
+  return nunjucks.configure(["node_modules/govuk-frontend/dist", "src/report"], {
+    autoescape: true,
+  });
+}
 
 export default app;

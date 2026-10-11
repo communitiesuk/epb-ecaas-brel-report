@@ -10,14 +10,19 @@
     "prepare": "vp config"
   },
   "dependencies": {
+    "@hono/node-server": "^2.1.4",
     "@sparticuz/chromium": "^153.0.0",
+    "@types/nunjucks": "^3.2.6",
     "hono": "^4.13.13",
+    "nunjucks": "^3.2.4",
     "puppeteer-core": "^25.13.0"
   },
   "devDependencies": {
     "@hono/vite-dev-server": "^0.26.1",
     "@types/node": "^26.6.5",
+    "govuk-frontend": "^6.5.1",
     "puppeteer": "^25.13.0",
+    "sass": "^1.105.1",
     "typescript": "^7.0.2",
     "vite": "catalog:",
     "vite-plus": "catalog:"
