@@ -1,0 +1,54 @@
+{
+  "reportType": "AS_BUILT",
+  "dwellingDetails": {
+    "siteReference": "SITE-HIGHFIELD-01",
+    "plotReference": "Plot 14",
+    "address": {
+      "line1": "Plot 14, Highfield Meadows",
+      "line2": "Long Lane",
+      "town": "Bristol",
+      "postcode": "BS1 4AA"
+    },
+    "buildingType": "Semi-detached house",
+    "livingZoneFloorArea": 34.5,
+    "restOfDwellingFloorArea": 58.0,
+    "totalFloorArea": 92.5,
+    "energySources": ["Mains electricity", "Air source heat pump", "Solar photovoltaic (PV)"]
+  },
+  "reportDetails": {
+    "assessorName": "Jane Doe",
+    "assessorId": "EES/012345",
+    "clientName": "David Smith",
+    "clientOrganisation": "Acme Developments Ltd",
+    "clientAddress": "12 Construction Way, London, EC1A 1BB",
+    "methodology": "HEM",
+    "regulation": "Part L March 2026",
+    "reportDate": "2026-10-28"
+  },
+  "keyMetrics": [
+    {
+      "name": "Emission Rate",
+      "unit": "kgCO2/m² per year",
+      "actual": 7.12,
+      "notional": 8.45,
+      "variance": -1.33,
+      "isCompliant": true
+    },
+    {
+      "name": "Primary Energy Rate",
+      "unit": "kWh/m² per year",
+      "actual": 38.9,
+      "notional": 45.2,
+      "variance": -6.3,
+      "isCompliant": true
+    },
+    {
+      "name": "Fabric Energy Efficiency",
+      "unit": "kWh/m² per year",
+      "actual": 31.4,
+      "notional": 35.0,
+      "variance": -3.6,
+      "isCompliant": true
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import puppeteerCore from "puppeteer-core";
 import nunjucks from "nunjucks";
 import process from "node:process";
 import govukStyles from "./sass/report.scss?inline";
+import mockBrelData from "./fixtures/mock-brel-data.json";
 
 export async function getBrowser() {
   const isLocal = process.env.NODE_ENV === "development" || !process.env.AWS_EXECUTION_ENV;
@@ -58,7 +59,7 @@ export async function generatePdfBuffer(htmlContent: string) {
 const app = new Hono();
 
 app.get("/", (c) => {
-  return c.html(reportHtml());
+  return c.html(renderReportHtml(mockBrelData));
 });
 
 app.use(
@@ -70,20 +71,35 @@ app.use(
 );
 
 app.post("/generate-pdf", async (c) => {
-  const pdf = new Uint8Array(await generatePdfBuffer(reportHtml()));
-  return c.body(pdf, 200, {
-    "Content-Type": "application/pdf",
-    "Content-Disposition": 'attachment; filename="report.pdf"',
-  });
+  try {
+    let payload = mockBrelData;
+
+    // If the caller (e.g. FHS lambda) sends JSON, use it; otherwise fall back to mock data
+    const contentType = c.req.header("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const body = await c.req.json();
+      if (body && Object.keys(body).length > 0) {
+        payload = body;
+      }
+    }
+
+    const pdf = new Uint8Array(await generatePdfBuffer(renderReportHtml(payload)));
+    return c.body(pdf, 200, {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": 'inline; filename="report.pdf"',
+    });
+  } catch (error) {
+    console.error("PDF generation failed:", error);
+    return c.json({ error: "Failed to generate PDF", details: (error as Error).message }, 500);
+  }
 });
 
-function reportHtml(): string {
+export function renderReportHtml(data: Record<string, unknown> = mockBrelData): string {
   const nunjucksEnv = getNunjucks();
 
   return nunjucksEnv.render("report.njk", {
     css: govukStyles,
-    title: "Sample Report",
-    content: "This is a sample report generated using Puppeteer and Nunjucks.",
+    ...data,
   });
 }
 
