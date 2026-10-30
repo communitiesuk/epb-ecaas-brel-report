@@ -1,0 +1,179 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+
+  <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+    Part L Compliance Report (BREL)
+  </h1>
+  <p class="govuk-body-l govuk-!-margin-bottom-8">
+    Assessment Type: {% if reportType == "AS_BUILT" %}As Built{% else %}As Designed{% endif %}
+  </p>
+
+ <div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <h2 class="govuk-heading-m">Dwelling details</h2>
+
+    {{ govukSummaryList({
+      rows: [
+        {
+          key: { text: "Site reference" },
+          value: { text: dwellingDetails.siteReference }
+        },
+        {
+          key: { text: "Plot reference" },
+          value: { text: dwellingDetails.plotReference }
+        },
+        {
+          key: { text: "Address" },
+          value: { 
+            text: (dwellingDetails.dwellingAddress | default("Not provided")).split("\n") | select | join(", ") 
+          }
+        },
+        {
+          key: { text: "Building type" },
+          value: { text: dwellingDetails.buildingType | capitalize }
+        },
+        {
+          key: { text: "Total floor area" },
+          value: { text: dwellingDetails.totalFloorArea + " m²" }
+        },
+        {
+          key: { text: "Energy sources" },
+          value: { text: dwellingDetails.energySources | formatEnergySources }
+        }
+      ]
+    }) }}
+  </div>
+
+  <div class="govuk-grid-column-one-half">
+    <h2 class="govuk-heading-m">Report details</h2>
+
+    {{ govukSummaryList({
+      rows: [
+        {
+          key: { text: "Assessor name" },
+          value: { text: reportDetails.assessorName }
+        },
+        {
+          key: { text: "Assessor ID" },
+          value: { text: reportDetails.assessorId }
+        },
+        {
+          key: { text: "Client name" },
+          value: { text: reportDetails.clientName }
+        },
+        {
+          key: { text: "Client organisation" },
+          value: { text: reportDetails.clientOrganisation }
+        },
+        {
+          key: { text: "Client address" },
+          value: { text: reportDetails.clientAddress }
+        },
+        {
+          key: { text: "Methodology" },
+          value: { text: reportDetails.methodology }
+        },
+        {
+          key: { text: "Regulation" },
+          value: { text: reportDetails.regulation }
+        },
+        {
+          key: { text: "Report Date" },
+          value: { text: reportDetails.reportDate | formatDate }
+        }
+      ]
+    }) }}
+  </div>
+</div>
+
+<h2 class="govuk-heading-m govuk-!-margin-bottom-2">Key Metrics</h2>
+
+<p class="govuk-body-m">
+  Dwellings should meet three key metrics to comply with Part L of the building regulations.
+</p>
+
+{% set rows = [] %}
+
+{% for metric in keyMetrics %}
+
+  {% if metric.name == "Emission Rate" %}
+    {% set actualLabel = "DER" %}
+    {% set notionalLabel = "TER" %}
+  {% elif metric.name == "Primary Energy Rate" %}
+    {% set actualLabel = "DPER" %}
+    {% set notionalLabel = "TPER" %}
+  {% elif metric.name == "Fabric Energy Efficiency" %}
+    {% set actualLabel = "DFEE" %}
+    {% set notionalLabel = "TFEE" %}
+  {% else %}
+    {% set actualLabel = "" %}
+    {% set notionalLabel = "" %}
+  {% endif %}
+
+  {% set metricLabel %}
+    {{ metric.name }}
+    <br>
+    <span class="govuk-body govuk-!-font-size-14">{{ metric.unit }}</span>
+  {% endset %}
+
+  {% set actualValue %}
+    {{ metric.actual }}
+    {% if actualLabel %}
+      <br>
+      <strong>({{ actualLabel }})</strong>
+    {% endif %}
+  {% endset %}
+
+  {% set notionalValue %}
+    {{ metric.notional }}
+    {% if notionalLabel %}
+      <br>
+      <strong>({{ notionalLabel }})</strong>
+    {% endif %}
+  {% endset %}
+
+  {% if metric.isCompliant %}
+    {% set complianceText = "Compliant" %}
+    {% set complianceClass = "govuk-tag--green" %}
+  {% else %}
+    {% set complianceText = "Not Compliant" %}
+    {% set complianceClass = "govuk-tag--red" %}
+  {% endif %}
+
+  {% set complianceTag = govukTag({
+    text: complianceText,
+    classes: complianceClass
+  }) %}
+
+  {% set variance = metric.variance %}
+
+  {% set varianceTag = govukTag({
+    text: variance,
+    classes: complianceClass
+  }) %}
+
+  {% set row = [
+    { html: metricLabel },
+    { html: actualValue },
+    { html: notionalValue },
+    { html: complianceTag },
+    { html: varianceTag }
+  ] %}
+
+  {% set rows = (rows.push(row), rows) %}
+
+{% endfor %}
+
+{{ govukTable({
+  head: [
+    { text: "Output" },
+    { text: "Actual dwelling" },
+    { text: "Notional dwelling" },
+    { text: "Compliance" },
+    { text: "Variance" }
+  ],
+  firstCellIsHeader: true,
+  rows: rows
+}) }}

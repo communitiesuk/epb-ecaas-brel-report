@@ -4,6 +4,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import chromium from "@sparticuz/chromium";
 import puppeteerCore from "puppeteer-core";
 import nunjucks from "nunjucks";
+import { registerFilters } from "./utils/nunjucks-filters";
 import process from "node:process";
 import govukStyles from "./sass/report.scss?inline";
 import mockBrelData from "./fixtures/mock-brel-data.json";
@@ -104,9 +105,13 @@ export function renderReportHtml(data: Record<string, unknown> = mockBrelData): 
 }
 
 function getNunjucks() {
-  return nunjucks.configure(["node_modules/govuk-frontend/dist", "src/report"], {
+  const env = nunjucks.configure(["node_modules/govuk-frontend/dist", "src/report"], {
     autoescape: true,
   });
+
+  registerFilters(env);
+
+  return env;
 }
 
 export default app;

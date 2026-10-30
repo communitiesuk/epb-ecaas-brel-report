@@ -3,17 +3,12 @@
   "dwellingDetails": {
     "siteReference": "SITE-HIGHFIELD-01",
     "plotReference": "Plot 14",
-    "address": {
-      "line1": "Plot 14, Highfield Meadows",
-      "line2": "Long Lane",
-      "town": "Bristol",
-      "postcode": "BS1 4AA"
-    },
-    "buildingType": "Semi-detached house",
+    "dwellingAddress": "Plot 14, Highfield Meadows, Long Lane, Bristol, BS1 4AA",
+    "buildingType": "house",
     "livingZoneFloorArea": 34.5,
     "restOfDwellingFloorArea": 58.0,
     "totalFloorArea": 92.5,
-    "energySources": ["Mains electricity", "Air source heat pump", "Solar photovoltaic (PV)"]
+    "energySources": ["mains_gas", "electricity", "LPG_bulk"]
   },
   "reportDetails": {
     "assessorName": "Jane Doe",
@@ -37,9 +32,9 @@
     {
       "name": "Primary Energy Rate",
       "unit": "kWh/m² per year",
-      "actual": 38.9,
-      "notional": 45.2,
-      "variance": -6.3,
+      "actual": 59.22,
+      "notional": 59.31,
+      "variance": 0.09,
       "isCompliant": true
     },
     {

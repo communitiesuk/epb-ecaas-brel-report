@@ -9,105 +9,10 @@
 {% block header %}{% endblock %}
 
 {% block content %}
-  <span class="govuk-caption-l">Building Regulations England Part L (BREL)</span>
-  <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">
-    {% if reportType == "AS_BUILT" %}As Built{% else %}As Designed{% endif %} Compliance Report
-  </h1>
-  <p class="govuk-body-m govuk-!-margin-bottom-6">
-    Regulation: <strong>{{ reportDetails.regulation }}</strong> | Methodology: <strong>{{ reportDetails.methodology }}</strong>
-  </p>
 
-  <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
+  {% include "sections/as-built-cover-page.njk" %}
 
-  <h2 class="govuk-heading-m">Dwelling Details</h2>
-  {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
-
-  {{ govukSummaryList({
-    rows: [
-      {
-        key: { text: "Site Reference" },
-        value: { text: dwellingDetails.siteReference }
-      },
-      {
-        key: { text: "Plot Reference" },
-        value: { text: dwellingDetails.plotReference }
-      },
-      {
-        key: { text: "Address" },
-        value: { text: [dwellingDetails.address.line1, dwellingDetails.address.line2, dwellingDetails.address.town, dwellingDetails.address.postcode] | select | join(", ") }
-      },
-      {
-        key: { text: "Building Type" },
-        value: { text: dwellingDetails.buildingType }
-      },
-      {
-        key: { text: "Total Floor Area" },
-        value: { text: dwellingDetails.totalFloorArea + " m² (Living: " + dwellingDetails.livingZoneFloorArea + " m², Rest: " + dwellingDetails.restOfDwellingFloorArea + " m²)" }
-      },
-      {
-        key: { text: "Energy Sources" },
-        value: { text: dwellingDetails.energySources | join(", ") }
-      }
-    ]
-  }) }}
-
-  <h2 class="govuk-heading-m">Report Details</h2>
-  {{ govukSummaryList({
-    rows: [
-      {
-        key: { text: "Assessor" },
-        value: { text: reportDetails.assessorName + " (ID: " + reportDetails.assessorId + ")" }
-      },
-      {
-        key: { text: "Client" },
-        value: { text: reportDetails.clientName + " — " + reportDetails.clientOrganisation }
-      },
-      {
-        key: { text: "Client Address" },
-        value: { text: reportDetails.clientAddress }
-      },
-      {
-        key: { text: "Report Date" },
-        value: { text: reportDetails.reportDate }
-      }
-    ]
-  }) }}
-
-  <h2 class="govuk-heading-m">Key Metrics</h2>
-  <table class="govuk-table">
-    <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-        <th scope="col" class="govuk-table__header">Metric</th>
-        <th scope="col" class="govuk-table__header">Actual Dwelling</th>
-        <th scope="col" class="govuk-table__header">Notional Dwelling</th>
-        <th scope="col" class="govuk-table__header">Variance</th>
-        <th scope="col" class="govuk-table__header">Compliance</th>
-      </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-      {% for metric in keyMetrics %}
-        <tr class="govuk-table__row">
-          <th scope="row" class="govuk-table__header">
-            {{ metric.name }}
-            <br>
-            <span class="govuk-hint govuk-!-font-size-14">{{ metric.unit }}</span>
-          </th>
-          <td class="govuk-table__cell">{{ metric.actual }}</td>
-          <td class="govuk-table__cell">{{ metric.notional }}</td>
-          <td class="govuk-table__cell">
-            {% if metric.variance > 0 %}+{% endif %}{{ metric.variance }}
-          </td>
-          <td class="govuk-table__cell">
-            {% if metric.isCompliant %}
-              <strong class="govuk-tag govuk-tag--green">Compliant</strong>
-            {% else %}
-              <strong class="govuk-tag govuk-tag--red">Not Compliant</strong>
-            {% endif %}
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="page-break"></div>
 
 {% endblock %}
 
