@@ -1,26 +1,6 @@
 @use "govuk-frontend/dist/govuk" as *;
 
-@media print {
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+@use "base/print";
+@use "base/overrides";
 
-  .govuk-table,
-  .govuk-summary-list {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-
-  .govuk-heading-xl,
-  .govuk-heading-l,
-  .govuk-heading-m {
-    page-break-after: avoid;
-    break-after: avoid;
-  }
-
-  .page-break-before {
-    page-break-before: always;
-    break-before: page;
-  }
-}
+@use "components/status-banner";

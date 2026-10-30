@@ -1,0 +1,42 @@
+.brel-status-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 75px 50px;
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    flex-shrink: 0;
+
+    svg {
+      width: 34px;
+      height: 34px;
+      display: block;
+    }
+  }
+
+  &__text {
+    font-family: "GDS Transport", arial, sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  &--pass {
+    background-color: #d1e2db !important;
+    border: 2px solid grey !important;
+    color: #005a30 !important;
+  }
+
+  &--fail {
+    background-color: #f7dcd9 !important;
+    border: 2px solid #8e9ca6 !important;
+    color: #3b0a08 !important;
+  }
+}

@@ -2,7 +2,6 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
-
   <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
     Part L Compliance Report (BREL)
   </h1>
@@ -93,6 +92,40 @@
 <p class="govuk-body-m">
   Dwellings should meet three key metrics to comply with Part L of the building regulations.
 </p>
+
+{% set allMetricsPass = true %}
+{% for metric in keyMetrics %}
+  {% if not metric.isCompliant %}
+    {% set allMetricsPass = false %}
+  {% endif %}
+{% endfor %}
+
+{% if allMetricsPass %}
+  {% set statusClass = "brel-status-banner--pass" %}
+  {% set statusText = "This dwelling meets the three key metrics" %}
+  {% set statusIcon %}
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+      <circle cx="10" cy="10" r="10" fill="#005a30"/>
+      <path d="M6 10.2L8.6 12.8L14.2 7.2" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  {% endset %}
+{% else %}
+  {% set statusClass = "brel-status-banner--fail" %}
+  {% set statusText = "This dwelling does not meet the three key metrics" %}
+  {% set statusIcon %}
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+      <circle cx="10" cy="10" r="10" fill="#3b0a08"/>
+      <path d="M7 7L13 13M13 7L7 13" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round"/>
+    </svg>
+  {% endset %}
+{% endif %}
+
+<div class="brel-status-banner {{ statusClass }} govuk-!-margin-top-4 govuk-!-margin-bottom-6" role="status">
+  <span class="brel-status-banner__icon">
+    {{ statusIcon | safe }}
+  </span>
+  <span class="brel-status-banner__text">{{ statusText }}</span>
+</div>
 
 {% set rows = [] %}
 

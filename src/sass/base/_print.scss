@@ -1,0 +1,30 @@
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .govuk-table,
+  .govuk-summary-list,
+  .brel-status-banner {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .govuk-heading-xl,
+  .govuk-heading-l,
+  .govuk-heading-m {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  .page-break-before {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+    break-after: page;
+  }
+}
