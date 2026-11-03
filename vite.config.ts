@@ -1,6 +1,7 @@
 import { defineConfig } from "vite-plus";
 import devServer from "@hono/vite-dev-server";
 import { NodePackageImporter } from "sass";
+import { builtinModules } from "node:module";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -45,8 +46,34 @@ export default defineConfig({
         importers: [new NodePackageImporter()],
       },
     },
+    lightningcss: {
+      errorRecovery: true,
+    },
   },
   build: {
     assetsInlineLimit: 100000,
+    target: "node22",
+    ssr: true,
+    outDir: "dist",
+    lib: {
+      entry: "src/index.ts",
+      formats: ["es"],
+      fileName: "index",
+    },
+    rolldownOptions: {
+      external: [
+        "@sparticuz/chromium",
+        ...builtinModules,
+        ...builtinModules.map((m) => `node:${m}`),
+      ],
+      output: {
+        entryFileNames: "index.mjs",
+        format: "es",
+        exports: "named",
+      },
+    },
+  },
+  ssr: {
+    noExternal: ["hono", "@hono/aws-lambda", "@hono/node-server", "nunjucks", "puppeteer-core"],
   },
 });

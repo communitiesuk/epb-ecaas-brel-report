@@ -1,22 +1,25 @@
 // src/index.ts
 import { Hono } from "hono";
-import { serveStatic } from "@hono/node-server/serve-static";
 import chromium from "@sparticuz/chromium";
 import puppeteerCore from "puppeteer-core";
 import nunjucks from "nunjucks";
 import { registerFilters } from "./utils/nunjucks-filters";
 import process from "node:process";
+import { handle } from "@hono/aws-lambda";
+import path from "node:path";
 import govukStyles from "./sass/report.scss?inline";
 import mockBrelData from "./fixtures/mock-brel-data.json";
+import { fileURLToPath } from "node:url";
 
 export async function getBrowser() {
   const isLocal = process.env.NODE_ENV === "development" || !process.env.AWS_EXECUTION_ENV;
 
   if (isLocal) {
-    const puppeteer = await import("puppeteer");
-    return await puppeteer.launch({
-      headless: true,
-    });
+    // const puppeteer = await import("puppeteer");
+    // return await puppeteer.launch({
+    //   headless: true,
+    // });
+    throw new Error("not supposed to get here");
   } else {
     const viewport = {
       deviceScaleFactor: 1,
@@ -63,13 +66,13 @@ app.get("/", (c) => {
   return c.html(renderReportHtml(mockBrelData));
 });
 
-app.use(
-  "/assets/*",
-  serveStatic({
-    root: "./node_modules/govuk-frontend/dist/govuk/assets",
-    rewriteRequestPath: (path) => path.replace(/^\/assets/, ""),
-  }),
-);
+// app.use(
+//   "/assets/*",
+//   serveStatic({
+//     root: "./node_modules/govuk-frontend/dist/govuk/assets",
+//     rewriteRequestPath: (path) => path.replace(/^\/assets/, ""),
+//   }),
+// );
 
 app.post("/generate-pdf", async (c) => {
   try {
@@ -98,14 +101,17 @@ app.post("/generate-pdf", async (c) => {
 export function renderReportHtml(data: Record<string, unknown> = mockBrelData): string {
   const nunjucksEnv = getNunjucks();
 
-  return nunjucksEnv.render("report.njk", {
+  return nunjucksEnv.render("report/report.njk", {
     css: govukStyles,
     ...data,
   });
 }
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 function getNunjucks() {
-  const env = nunjucks.configure(["node_modules/govuk-frontend/dist", "src/report"], {
+  const env = nunjucks.configure([path.join(__dirname, "templates")], {
     autoescape: true,
   });
 
@@ -114,4 +120,4 @@ function getNunjucks() {
   return env;
 }
 
-export default app;
+export const handler = handle(app);
