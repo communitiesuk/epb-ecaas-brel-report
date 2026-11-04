@@ -5,7 +5,7 @@ import { builtinModules } from "node:module";
 import fs from "node:fs";
 import path from "node:path";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   staged: {
     "*": "vp check --fix",
   },
@@ -23,14 +23,12 @@ export default defineConfig({
       name: "force-inline-dev-fonts",
       apply: "serve",
       transform(code, id) {
-        if (/\.(woff2?|ttf|eot|otf)(\?.*)?\$/.test(id)) {
+        if (/\.(woff2?|ttf|eot|otf)(\?.*)?$/.test(id)) {
           const filePath = id.split("?")[0];
           try {
             const buffer = fs.readFileSync(filePath);
             const ext = path.extname(filePath).replace(".", "");
             const base64 = buffer.toString("base64");
-
-            // Return it as a default exported data URI string
             return `export default "data:font/${ext};base64,${base64}"`;
           } catch (e) {
             console.error(`Failed to inline font: ${filePath}`, e);
@@ -63,6 +61,7 @@ export default defineConfig({
     rolldownOptions: {
       external: [
         "@sparticuz/chromium",
+        "puppeteer",
         ...builtinModules,
         ...builtinModules.map((m) => `node:${m}`),
       ],
@@ -74,6 +73,10 @@ export default defineConfig({
     },
   },
   ssr: {
-    noExternal: ["hono", "@hono/aws-lambda", "@hono/node-server", "nunjucks", "puppeteer-core"],
+    noExternal:
+      command === "build"
+        ? ["hono", "@hono/aws-lambda", "@hono/node-server", "nunjucks", "puppeteer-core"]
+        : ["hono", "@hono/aws-lambda", "@hono/node-server", "puppeteer-core"],
+    external: command === "serve" ? ["nunjucks"] : [],
   },
-});
+}));
