@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 22
+    commands:
+      - corepack enable
+      - pnpm --version
+      - pnpm install --frozen-lockfile
+
+  build:
+    commands:
+      - pnpm run build
+
+      - mkdir -p dist/templates
+      - cp -r node_modules/govuk-frontend/dist/govuk dist/templates/
+      - cp -r src/report dist/templates/
+      - echo '{"type":"module"}' > dist/package.json
+
+      - cd dist && zip -r ../deployment.zip . && cd ..
+
+artifacts:
+  files:
+    - deployment.zip
+  discard-paths: yes
+
+cache:
+  paths:
+    - "/root/.local/share/pnpm/store/**/*"
+    - "node_modules/**/*"
