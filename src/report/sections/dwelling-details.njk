@@ -1,0 +1,38 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+<div class="brel-section">
+  <div class="govuk-grid-column-one-half">
+    <h2 class="govuk-heading-m">Dwelling details</h2>
+
+    {{ govukSummaryList({
+      rows: [
+        {
+          key: { text: "Site reference" },
+          value: { text: dwellingDetails.siteReference }
+        },
+        {
+          key: { text: "Plot reference" },
+          value: { text: dwellingDetails.plotReference }
+        },
+        {
+          key: { text: "Address" },
+          value: {
+            text: (dwellingDetails.dwellingAddress | default("Not provided")).split("\n") | select | join(", ")
+          }
+        },
+        {
+          key: { text: "Building type" },
+          value: { text: dwellingDetails.buildingType | capitalize }
+        },
+        {
+          key: { text: "Total floor area" },
+          value: { text: dwellingDetails.totalFloorArea + " m²" }
+        },
+        {
+          key: { text: "Energy sources" },
+          value: { text: dwellingDetails.energySources | formatEnergySources }
+        }
+      ]
+    }) }}
+  </div>
+</div>

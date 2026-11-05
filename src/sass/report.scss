@@ -4,3 +4,8 @@
 @use "base/overrides";
 
 @use "components/status-banner";
+@use "components/brel-review-sections";
+
+.brel-section {
+  margin-bottom: 40px;
+}

@@ -1,0 +1,44 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+<div class="brel-section">
+  <div class="govuk-grid-column-one-half">
+    <h2 class="govuk-heading-m">Report details</h2>
+
+    {{ govukSummaryList({
+      rows: [
+        {
+          key: { text: "Assessor name" },
+          value: { text: reportDetails.assessorName }
+        },
+        {
+          key: { text: "Assessor ID" },
+          value: { text: reportDetails.assessorId }
+        },
+        {
+          key: { text: "Client name" },
+          value: { text: reportDetails.clientName }
+        },
+        {
+          key: { text: "Client organisation" },
+          value: { text: reportDetails.clientOrganisation }
+        },
+        {
+          key: { text: "Client address" },
+          value: { text: reportDetails.clientAddress }
+        },
+        {
+          key: { text: "Methodology" },
+          value: { text: reportDetails.methodology }
+        },
+        {
+          key: { text: "Regulation" },
+          value: { text: reportDetails.regulation }
+        },
+        {
+          key: { text: "Report date" },
+          value: { text: reportDetails.reportDate | formatDate }
+        }
+      ]
+    }) }}
+  </div>
+</div>

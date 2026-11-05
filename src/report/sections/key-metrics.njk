@@ -1,0 +1,128 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+<div class="brel-section">
+  <h2 class="govuk-heading-m govuk-!-margin-bottom-2">Key Metrics</h2>
+
+  <p class="govuk-body-m">
+    Dwellings should meet three key metrics to comply with Part L of the building regulations.
+  </p>
+
+  {% set allMetricsPass = true %}
+  {% for metric in keyMetrics %}
+    {% if not metric.isCompliant %}
+      {% set allMetricsPass = false %}
+    {% endif %}
+  {% endfor %}
+
+  {% if allMetricsPass %}
+    {% set statusClass = "brel-status-banner--pass" %}
+    {% set statusText = "This dwelling meets the three key metrics" %}
+    {% set statusIcon %}
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+        <circle cx="10" cy="10" r="10" fill="#005a30"/>
+        <path d="M6 10.2L8.6 12.8L14.2 7.2" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    {% endset %}
+  {% else %}
+    {% set statusClass = "brel-status-banner--fail" %}
+    {% set statusText = "This dwelling does not meet the three key metrics" %}
+    {% set statusIcon %}
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+        <circle cx="10" cy="10" r="10" fill="#3b0a08"/>
+        <path d="M7 7L13 13M13 7L7 13" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round"/>
+      </svg>
+    {% endset %}
+  {% endif %}
+
+  <div class="brel-status-banner {{ statusClass }} govuk-!-margin-top-4 govuk-!-margin-bottom-6" role="status">
+    <span class="brel-status-banner__icon">
+      {{ statusIcon | safe }}
+    </span>
+    <span class="brel-status-banner__text">{{ statusText }}</span>
+  </div>
+
+  {% set rows = [] %}
+
+  {% for metric in keyMetrics %}
+
+    {% if metric.name == "Emission Rate" %}
+      {% set actualLabel = "DER" %}
+      {% set notionalLabel = "TER" %}
+    {% elif metric.name == "Primary Energy Rate" %}
+      {% set actualLabel = "DPER" %}
+      {% set notionalLabel = "TPER" %}
+    {% elif metric.name == "Fabric Energy Efficiency" %}
+      {% set actualLabel = "DFEE" %}
+      {% set notionalLabel = "TFEE" %}
+    {% else %}
+      {% set actualLabel = "" %}
+      {% set notionalLabel = "" %}
+    {% endif %}
+
+    {% set metricLabel %}
+      {{ metric.name }}
+      <br>
+      <span class="govuk-body govuk-!-font-size-14">{{ metric.unit }}</span>
+    {% endset %}
+
+    {% set actualValue %}
+      {{ metric.actual }}
+      {% if actualLabel %}
+        <br>
+        <strong>({{ actualLabel }})</strong>
+      {% endif %}
+    {% endset %}
+
+    {% set notionalValue %}
+      {{ metric.notional }}
+      {% if notionalLabel %}
+        <br>
+        <strong>({{ notionalLabel }})</strong>
+      {% endif %}
+    {% endset %}
+
+    {% if metric.isCompliant %}
+      {% set complianceText = "Compliant" %}
+      {% set complianceClass = "govuk-tag--green" %}
+    {% else %}
+      {% set complianceText = "Not Compliant" %}
+      {% set complianceClass = "govuk-tag--red" %}
+    {% endif %}
+
+    {% set complianceTag = govukTag({
+      text: complianceText,
+      classes: complianceClass
+    }) %}
+
+    {% set variance = metric.variance %}
+
+    {% set varianceTag = govukTag({
+      text: variance,
+      classes: complianceClass
+    }) %}
+
+    {% set row = [
+      { html: metricLabel },
+      { html: actualValue },
+      { html: notionalValue },
+      { html: complianceTag },
+      { html: varianceTag }
+    ] %}
+
+    {% set rows = (rows.push(row), rows) %}
+
+  {% endfor %}
+
+  {{ govukTable({
+    head: [
+      { text: "Output" },
+      { text: "Actual dwelling" },
+      { text: "Notional dwelling" },
+      { text: "Compliance" },
+      { text: "Variance" }
+    ],
+    firstCellIsHeader: true,
+    rows: rows
+  }) }}
+</div>

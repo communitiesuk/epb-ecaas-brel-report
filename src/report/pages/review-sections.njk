@@ -1,0 +1,14 @@
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+<div class="govuk-grid-row">
+
+    {% include "sections/elements-dont-meet-suggested-standards.njk" %}
+
+    {% include "sections/elements-should-be-checked-for-errors.njk" %}
+
+    {% call govukInsetText() %}
+      <strong>The builder needs to supply additional evidence to Building Control to prove that the dwelling complies with Part L.</strong>
+      Check the evidence list in this report and Approved Document L to see what evidence should be provided.
+    {% endcall %}
+
+  </div>

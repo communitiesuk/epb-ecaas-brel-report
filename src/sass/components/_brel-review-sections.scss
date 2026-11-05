@@ -1,0 +1,27 @@
+.brel-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brel-section-heading__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.brel-section-heading__icon--warning {
+  background-color: #fff7bf;
+  color: #594d00;
+}
+
+.brel-section-heading__icon--info {
+  background-color: #b1d7f1;
+  color: #0c2d4a;
+}

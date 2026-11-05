@@ -1,0 +1,17 @@
+<h1 class="govuk-heading-xl govuk-!-margin-bottom-4">
+  Part L Compliance Report (BREL)
+</h1>
+
+<p class="govuk-body-l govuk-!-margin-bottom-8">
+  Assessment Type: {% if reportType == "AS_BUILT" %}As Built{% else %}As Designed{% endif %}
+</p>
+
+<div class="govuk-grid-row">
+
+  {% include "sections/dwelling-details.njk" %}
+
+  {% include "sections/report-details.njk" %}
+
+</div>
+
+{% include "sections/key-metrics.njk" %}

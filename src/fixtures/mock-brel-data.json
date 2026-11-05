@@ -45,5 +45,33 @@
       "variance": -3.6,
       "isCompliant": true
     }
+  ],
+  "elementsBelowStandards": [
+    {
+      "element": "Lighting - Bulb 1",
+      "guidance": "Efficacy should be 105 lm/W or more",
+      "inDwelling": "Bulb 1's efficacy is 72 lm/W",
+      "explanation": "This is because we couldn't get bulbs that fit the sockets"
+    },
+    {
+      "element": "Heat Network 1",
+      "guidance": "The CO2 emission factor for delivered heat should be 0.086 kgCO2/kWh or less",
+      "inDwelling": "The CO2 emission factor for delivered heat is 0.99 kgCO2/kWh",
+      "explanation": "The building is connected to an older, high-carbon district heating system that has not yet been upgraded."
+    }
+  ],
+  "elementsToCheckForErrors": [
+    {
+      "element": "External Wall 1",
+      "guidance": "External walls should have a  U-value of 0.26 W/(m²·K) or less",
+      "inDwelling": "External wall 1's U-value is  0.37 W/(m²·K)",
+      "explanation": "We have used a new form of insulation which is extremely effective."
+    },
+    {
+      "element": "Window 1",
+      "guidance": "Windows (excluding rooflights) typically have a U-value of 1.1 W/(m²·K) or more",
+      "inDwelling": "Window 1's U-value is  3.7 W/(m²·K)",
+      "explanation": "Original single-glazed windows were kept rather than replaced."
+    }
   ]
 }

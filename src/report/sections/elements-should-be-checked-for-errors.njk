@@ -1,0 +1,43 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+<div class="brel-section">
+  <h2 class="govuk-heading-l brel-section-heading">
+    <span class="brel-section-heading__icon brel-section-heading__icon--info" aria-hidden="true">?</span>
+    Elements that should be checked for errors
+  </h2>
+
+  <p class="govuk-body-m">
+  This highlights elements with unusually good performance, which could be the result of an input error. Building control should check these values against evidence to ensure they are reflective of the designs and the building.
+  </p>
+
+  {% set rows = [] %}
+
+  {% for item in elementsToCheckForErrors %}
+    {% set row = [
+      { text: item.element },
+      { text: item.guidance },
+      { text: item.inDwelling },
+      { text: item.explanation }
+    ] %}
+
+    {% set rows = (rows.push(row), rows) %}
+  {% endfor %}
+
+  {% if rows.length %}
+    {{ govukTable({
+      head: [
+        { text: "Element" },
+        { text: "Guidance" },
+        { text: "In this dwelling" },
+        { text: "Explanation" }
+      ],
+      firstCellIsHeader: true,
+      rows: rows
+    }) }}
+  {% else %}
+    <p class="govuk-body">No elements found which require review.</p>
+  {% endif %}
+</div>
