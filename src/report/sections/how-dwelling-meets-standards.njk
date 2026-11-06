@@ -1,0 +1,55 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set guidanceStatuses = [
+  {
+    text: "Meets standards",
+    status: "meets",
+    icon: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false"><path d="M4 12.5l5 5L20 6" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    description: "This shows the element has a performance value which meets suggested standards in Approved Document L."
+  },
+  {
+    text: "Does not meet standards",
+    status: "does-not-meet",
+    icon: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false"><path d="M12 4v11" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/></svg>',
+    description: "This shows the element has a performance value which does not meet suggested standards in Approved Document L. The designer or contractor should explain why the standard has not been met."
+  },
+  {
+    text: "Check for errors",
+    status: "check-for-errors",
+    icon: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false"><path d="M9 9a3 3 0 1 1 5.5 1.7c-1.5 1.5-2.5 2-2.5 4.3" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/></svg>',
+    description: "This shows the element has unusually good performance, which could be the result of an input error. The designer or contractor should explain how the performance value is met."
+  }
+] %}
+
+<div class="brel-section">
+  <h2 class="govuk-heading-l brel-section-heading">
+    How the dwelling meets suggested standards
+  </h2>
+
+  {% call govukInsetText() %}
+    The following information shows whether the calculation inputs meet the suggested standards in Approved document L. <strong>These standards are a guide for how dwellings can meet Part L of the building regulations; they are not mandatory for compliance.</strong>
+  {% endcall %}
+
+  <p class="govuk-body-m govuk-!-font-weight-bold">
+    Elements are marked as:
+  </p>
+
+  {% set rows = [] %}
+
+  {% for item in guidanceStatuses %}
+    {% set row = [
+      {
+        html: '<span class="brel-guidance-tag brel-guidance-tag--' ~ item.status ~ '"><span class="brel-guidance-tag__icon" aria-hidden="true">' ~ item.icon ~ '</span>' ~ item.text ~ '</span>'
+      },
+      { text: item.description }
+    ] %}
+
+    {% set rows = (rows.push(row), rows) %}
+  {% endfor %}
+
+  {{ govukTable({
+    firstCellIsHeader: true,
+    rows: rows
+  }) }}
+</div>

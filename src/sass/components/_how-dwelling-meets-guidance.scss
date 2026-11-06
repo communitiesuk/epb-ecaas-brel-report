@@ -4,31 +4,29 @@
   gap: 10px;
   padding: 8px 10px;
   white-space: nowrap;
-}
+  font-weight: 400;
 
-.brel-guidance-tag__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: 2px solid currentColor;
-  border-radius: 50%;
-  font-weight: bold;
-  flex-shrink: 0;
-}
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+  }
 
-.brel-guidance-tag--meets {
-  background-color: #cce2d8;
-  color: #005a30;
-}
+  &--meets {
+    background-color: #cce2d8;
+    color: #005a30;
+  }
 
-.brel-guidance-tag--does-not-meet {
-  background-color: #fff7bf;
-  color: #594d00;
-}
+  &--does-not-meet {
+    background-color: #fff7bf;
+    color: #594d00;
+  }
 
-.brel-guidance-tag--unusual {
-  background-color: #b1d7f1;
-  color: #0c2d4a;
+  &--check-for-errors {
+    background-color: #b1d7f1;
+    color: #0c2d4a;
+  }
 }
