@@ -31,4 +31,5 @@ dist-ssr
 .env.*
 !.env.example
 
+# deployment build
 deployment.zip

@@ -6,24 +6,26 @@
   "scripts": {
     "dev": "vp dev",
     "build": "tsc && vp build",
+    "build:lambda": "tsc && vp build && node scripts/package-lambda.mjs",
     "preview": "vp preview",
     "prepare": "vp config",
     "test": "vp test"
   },
   "dependencies": {
-    "@hono/node-server": "^2.1.4",
+    "@hono/aws-lambda": "^1.0.1",
+    "@hono/node-server": "^2.1.6",
     "@sparticuz/chromium": "^153.0.0",
     "@types/nunjucks": "^3.2.6",
-    "hono": "^4.13.13",
+    "hono": "^4.13.16",
     "nunjucks": "^3.2.4",
-    "puppeteer-core": "^25.13.0"
+    "puppeteer-core": "^25.16.0"
   },
   "devDependencies": {
     "@hono/vite-dev-server": "^0.26.1",
-    "@types/node": "^26.6.5",
-    "govuk-frontend": "^6.5.1",
-    "puppeteer": "^25.13.0",
-    "sass": "^1.105.1",
+    "@types/node": "^26.6.6",
+    "govuk-frontend": "^6.6.0",
+    "puppeteer": "^25.16.0",
+    "sass": "^1.108.0",
     "typescript": "^7.0.2",
     "vite": "catalog:",
     "vite-plus": "catalog:"

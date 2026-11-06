@@ -1,21 +1,33 @@
-// src/index.ts
 import { Hono } from "hono";
-import { serveStatic } from "@hono/node-server/serve-static";
+import nunjucksModule from "nunjucks";
 import chromium from "@sparticuz/chromium";
 import puppeteerCore from "puppeteer-core";
-import nunjucks from "nunjucks";
 import { registerFilters } from "./utils/nunjucks-filters";
 import process from "node:process";
+import fs from "node:fs";
+import { handle } from "@hono/aws-lambda";
+import path from "node:path";
 import govukStyles from "./sass/report.scss?inline";
 import mockBrelData from "./fixtures/mock-brel-data.json";
+import { fileURLToPath } from "node:url";
+
+const nunjucks =
+  (nunjucksModule as unknown as { default?: typeof nunjucksModule }).default ?? nunjucksModule;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export async function getBrowser() {
   const isLocal = process.env.NODE_ENV === "development" || !process.env.AWS_EXECUTION_ENV;
 
   if (isLocal) {
-    const puppeteer = await import("puppeteer");
+    const moduleName = "puppeteer";
+    const puppeteerModule = await import(/* @vite-ignore */ moduleName);
+    const puppeteer = puppeteerModule.default ?? puppeteerModule;
+
     return await puppeteer.launch({
       headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
   } else {
     const viewport = {
@@ -36,7 +48,6 @@ export async function getBrowser() {
   }
 }
 
-// Core logic reusable by local scripts and Lambda
 export async function generatePdfBuffer(htmlContent: string) {
   let browser = null;
   try {
@@ -63,19 +74,10 @@ app.get("/", (c) => {
   return c.html(renderReportHtml(mockBrelData));
 });
 
-app.use(
-  "/assets/*",
-  serveStatic({
-    root: "./node_modules/govuk-frontend/dist/govuk/assets",
-    rewriteRequestPath: (path) => path.replace(/^\/assets/, ""),
-  }),
-);
-
 app.post("/generate-pdf", async (c) => {
   try {
     let payload = mockBrelData;
 
-    // If the caller (e.g. FHS lambda) sends JSON, use it; otherwise fall back to mock data
     const contentType = c.req.header("content-type");
     if (contentType && contentType.includes("application/json")) {
       const body = await c.req.json();
@@ -95,23 +97,39 @@ app.post("/generate-pdf", async (c) => {
   }
 });
 
+function getNunjucks() {
+  const candidatePaths = [
+    path.join(__dirname, "templates"),
+    path.join(process.cwd(), "templates"),
+    path.join(process.cwd(), "src/templates"),
+    path.join(process.cwd(), "src"),
+  ].filter((p) => fs.existsSync(p));
+
+  const govukPath = path.join(process.cwd(), "node_modules/govuk-frontend/dist");
+  if (fs.existsSync(govukPath)) {
+    candidatePaths.push(govukPath);
+  }
+
+  const env = nunjucks.configure(candidatePaths, {
+    autoescape: true,
+    noCache: process.env.NODE_ENV === "development",
+  });
+
+  registerFilters(env);
+  return env;
+}
+
 export function renderReportHtml(data: Record<string, unknown> = mockBrelData): string {
   const nunjucksEnv = getNunjucks();
 
-  return nunjucksEnv.render("report.njk", {
+  return nunjucksEnv.render("report/report.njk", {
     css: govukStyles,
     ...data,
   });
 }
 
-function getNunjucks() {
-  const env = nunjucks.configure(["node_modules/govuk-frontend/dist", "src/report"], {
-    autoescape: true,
-  });
+// Needed by AWS Lambda
+export const handler = handle(app);
 
-  registerFilters(env);
-
-  return env;
-}
-
+// Needed by local Vite dev server
 export default app;
